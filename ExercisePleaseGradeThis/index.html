@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Penguins</title>
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+    <script src="scatter_plot.js"></script>
+    <link rel="stylesheet" href="styles/style.css">
+</head>
+<body>
+<div>
+    <svg id="mysvg" width="100vw" height="100vh" viewBox="0 0 1000 1000 "></svg>
+</div>
+<script>
+
+d3.tsv("../data/palmer_penguin_species.tsv").then(main);
+
+function main(data)
+{
+    
+    let species =["Adelie","Gentoo","Chinstrap"];
+    // take colors from https://colorbrewer2.org/#type=sequential&scheme=BuGn&n=3
+    let colors = ["#d7191c","#fdae61","#2c7bb6"];
+
+    flipper_domain = d3.extent(data,function (d) {return +d.flipper_length_mm;});
+
+    let radius_scale = d3.scaleLinear()
+        .domain(flipper_domain)
+        .range([3,10]);
+
+    let transform_data =d3.map(data,function (d) {
+        return {
+            x: +d.culmen_length_mm,
+            y: +d.culmen_depth_mm,
+            r: radius_scale(d.flipper_length_mm),
+            c: colors[species.indexOf(d.species)],
+        }
+    })
+    scatter_plot(transform_data,
+        "#mysvg",
+        title="Penguin Species",
+        xLabel="flipper_length_mm",
+        yLabel="culmen_depth_mm",
+        margin = 100)
+}
+
+</script>
+</body>
+</html>
