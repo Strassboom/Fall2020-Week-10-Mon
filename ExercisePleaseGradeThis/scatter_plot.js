@@ -12,7 +12,7 @@ function scatter_plot(data,
     
     
     
-    let axis = d3.select(`#${ax}`)
+    let axis = d3.select(`${ax}`)
 
     axis.selectAll('.markers')
         .data(data)
@@ -58,5 +58,22 @@ function scatter_plot(data,
         .attr("text-anchor","middle")
         .text(title)
         .attr("class","title")
+
+    // legend
+    if (legend.length>0){
+        legend.forEach(
+            function (d,i){
+            let space = 50
+            let lgnd = axis.append("g").attr('transform',`translate(${900},${i*50 + space})`);
+            lgnd.append('rect').attr('width',function (d){return 40})
+                               .attr('height',function (d){return 40})
+                               .attr('fill',function (d){
+                                   return legendcolors[i]
+                               })
+                .attr("class",d)
+            lgnd.append('text').attr("class","legend").attr("dx","-80").attr("dy","30").text(d)
+
+        })
+    }
 
 }
