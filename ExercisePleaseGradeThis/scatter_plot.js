@@ -1,24 +1,30 @@
-function scatter_plot(X,Y,markersize,
-                      ColorData,
-                      axis_key,
+function scatter_plot(data,
+                      ax,
                       title="",
                       xLabel="",
                       yLabel="",
+                      legend=[],
+                      legendcolors=[],
                       margin = 100)
 {
-    let xScale= d3.scaleLinear().domain(d3.extent(X)).range([0+margin,1000-margin])
-    let yScale= d3.scaleLinear().domain(d3.extent(Y)).range([1000-margin,0 + margin])
-    let colorScale= d3.scaleLinear().domain(d3.extent(ColorData)).range(['steelblue','brown'])
-    let axis = d3.select(`#${axis_key}`)
+    let xScale= d3.scaleLinear().domain(d3.extent(data,function (d){return d.x})).range([margin,1000-margin])
+    let yScale= d3.scaleLinear().domain(d3.extent(data,function (d){return d.y})).range([1000-margin,0 + margin])
+    
+    
+    
+    let axis = d3.select(`#${ax}`)
 
     axis.selectAll('.markers')
-        .data(X)
+        .data(data)
         .enter()
         .append('g')
         .attr('transform', function(d,i) {
-            return `translate(${xScale(X[i])}, ${yScale(Y[i])})`})
-        .append('circle').attr("r",function(d){return d.flipper_length_mm})
-        .style("fill",function (d,i){return colorScale(ColorData[i])})
+            return `translate(${xScale(d.x)}, ${yScale(d.y)})`})
+        .append('circle')
+        .attr("class",function (d,i){
+            return `cls_${i}`})
+        .attr("r",function(d){return d.r})
+        .style("fill",function (d){return d.c})
     // x and y Axis function
     let x_axis = d3.axisBottom(xScale).ticks(4)
     let y_axis = d3.axisLeft(yScale).ticks(4)
